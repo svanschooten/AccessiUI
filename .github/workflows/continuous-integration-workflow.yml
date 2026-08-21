@@ -53,8 +53,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      # Built as its own step so a build failure reports as a build failure,
+      # rather than as a webServer timeout two minutes later.
+      - name: Build
+        run: npm run build --workspace @accessible-dnd/character-sheet
+
       - name: Browser tests
-        run: npm run test:e2e
+        run: npx playwright test
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

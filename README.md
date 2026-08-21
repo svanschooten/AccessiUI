@@ -4,7 +4,7 @@ An accessibility-first web toolkit for building interfaces that adapt to people 
 
 This project exists because playing D&D should not depend on being able to read small text or hit small targets. The character sheet is the reason to build it; the toolkit is what makes the solution reusable.
 
-See [the project plan](accessible-ui-project-plan.md) for the full design. It is long, but sections 5 (guiding principles) and 8 (component contract) are the ones you need before writing code.
+Full documentation lives in [docs/](docs/README.md). Before writing code you want [Quick reference](docs/principles/quick-reference.md) and the [Component contract](docs/toolkit/component-contract.md) — about ten minutes together.
 
 ## Quick start
 
@@ -21,7 +21,13 @@ Then open the printed URL. The current build is the **Phase 1 vertical slice**: 
 npm run verify
 ```
 
-That runs lint, typecheck, and tests — the same checks CI runs.
+Lint, typecheck, and unit tests. For the browser tier:
+
+```bash
+npm run test:e2e
+```
+
+That needs Chromium once: `npx playwright install chromium`. CI runs both as separate jobs.
 
 ## Where things live
 
@@ -48,12 +54,14 @@ docs/                       Architecture, accessibility, testing guides.
 Three things will get a pull request sent back more than anything else:
 
 1. **No colour-only information.** Every state needs text, shape, or an icon as well.
-2. **Native HTML first.** Do not build from a `div` what a `<button>` already does. The one exception is `<input type="number">` — see [docs/accessibility.md](docs/accessibility.md).
+2. **Native HTML first.** Do not build from a `div` what a `<button>` already does. The one exception is `<input type="number">` — see [Quick reference](docs/principles/quick-reference.md).
 3. **Feedback goes next to the control that caused it.** Not in a corner toast, not only in a live region.
 
 ## Current status
 
-Phase 1 of [the roadmap](accessible-ui-project-plan.md). The exit criterion is not "the code works" — it is that a player used this at a real table and told us what was wrong with it.
+Phase 1 of [the roadmap](docs/project/roadmap.md). The code is built and tested; what remains is a screen-reader pass and one session at a real table. The exit criterion is not "the code works" — it is that a player used this during a game and told us what was wrong with it.
+
+See [Current phase](docs/project/phase-1.md) for what is left and how to run that session.
 
 ## Licence
 

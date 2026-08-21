@@ -34,9 +34,18 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run build --workspace @accessible-dnd/character-sheet && npm run preview --workspace @accessible-dnd/character-sheet -- --port 4173',
+    // Serve only. The build runs as its own step (see the `test:e2e` script and
+    // the CI workflow) so a build failure reports as a build failure instead of
+    // hiding behind a webServer timeout two minutes later.
+    //
+    // The host is pinned to 127.0.0.1 rather than left as `localhost`: on CI
+    // runners `localhost` can resolve to ::1 first, leaving Vite bound to IPv6
+    // while Playwright polls IPv4 until it gives up.
+    command: 'npm run preview --workspace @accessible-dnd/character-sheet',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 60_000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });

@@ -4,7 +4,9 @@ Contributions of many kinds are useful here, not only code. Testing with a scree
 
 ## Before you start
 
-Read [docs/accessibility.md](docs/accessibility.md). It is short, and it covers the rules that most often send a change back.
+Read [Quick reference](docs/principles/quick-reference.md). It is one page, and it covers the rules that most often send a change back.
+
+For anything deeper, [docs/](docs/README.md) is the index.
 
 ## Setting up
 
@@ -19,7 +21,7 @@ npm run dev
 npm run verify
 ```
 
-Then run through the manual checklist in [docs/accessibility.md](docs/accessibility.md#what-to-check-before-opening-a-pull-request). Automated checks catch a minority of accessibility problems; the manual list catches the ones that matter.
+Then run `npm run test:e2e` for the browser tier, and work through the manual checklist in [Quick reference](docs/principles/quick-reference.md#what-to-check-before-opening-a-pull-request). Automated checks catch a minority of accessibility problems; the manual list catches the ones that matter.
 
 ## Adding a component
 

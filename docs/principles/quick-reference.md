@@ -1,6 +1,12 @@
-# Accessibility rules for contributors
+# Quick reference
 
-The full reasoning is in the [project plan](../accessible-ui-project-plan.md). This is the working summary.
+*The rules that decide most code reviews, on one page.*
+
+[← Documentation index](../README.md)
+
+---
+
+The reasoning behind each of these lives in [Guiding principles](README.md) and the [Component contract](../toolkit/component-contract.md). This is the working summary.
 
 ## Non-negotiables
 
@@ -16,7 +22,7 @@ The full reasoning is in the [project plan](../accessible-ui-project-plan.md). T
 
 ## Tokens, not hard-coded values
 
-Anything accessibility-sensitive — target size, font scale, spacing, focus width, colour — comes from a token in `packages/accessible-ui/src/theme/theme.css`:
+Anything accessibility-sensitive — target size, font scale, spacing, focus width, colour — comes from a token in [`packages/accessible-ui/src/theme/theme.css`](../../packages/accessible-ui/src/theme/theme.css):
 
 ```css
 .my-control {

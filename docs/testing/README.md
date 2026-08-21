@@ -1,4 +1,84 @@
-# Testing
+# Testing strategy
+
+*Automated checks are necessary and nowhere near sufficient.*
+
+[← Documentation index](../README.md)
+
+---
+
+Automated testing is necessary but insufficient.
+
+## Automated checks
+
+Every component should be tested for:
+
+- accessible name;
+- correct role/state;
+- invalid ARIA usage;
+- keyboard access;
+- focus visibility;
+- common WCAG violations;
+- contrast where tooling can evaluate it.
+
+## Browser tests
+
+The application should be tested at:
+
+- mobile width;
+- tablet width;
+- desktop width;
+- 100% zoom;
+- 200% zoom;
+- high browser text settings;
+- narrow viewport/reflow conditions;
+- forced colors where available.
+
+### Magnification
+
+Browser zoom is not a substitute for testing under a screen magnifier. Zoom reflows the layout; magnification does not (see [Component contract](../toolkit/component-contract.md)). Test with:
+
+- macOS Zoom;
+- Windows Magnifier, and ZoomText where available;
+- Android magnification;
+- iOS Zoom.
+
+The specific check: with the viewport showing roughly a fifth of the page, does acting on a control produce feedback the user can actually see without panning?
+
+## Assistive technology
+
+At least one screen-reader workflow should be tested on each major supported platform before a release is called accessibility-ready.
+
+Candidates:
+
+- NVDA + Windows;
+- VoiceOver + macOS/iOS;
+- TalkBack + Android.
+
+The project should document exactly what was tested instead of making blanket claims of universal screen-reader support.
+
+## Keyboard-only
+
+Every interaction must be possible without a mouse or touch.
+
+Test:
+
+- initial page navigation;
+- character editing;
+- opening settings;
+- adjusting sliders;
+- dialogs;
+- rolling dice;
+- reading results;
+- closing overlays;
+- returning focus.
+
+## Real-device testing
+
+Because mobile assistive technology can behave differently from desktop screen readers, advanced touch widgets must be tested on actual devices. WAI-ARIA's slider guidance explicitly warns about limitations in touch-based assistive technology interactions.
+
+---
+
+## Running the tests
 
 ```bash
 npm run verify          # lint + typecheck + unit tests
@@ -39,3 +119,4 @@ Add it to `theme.css`, then add at least one pairing in `tests/contrast.test.ts`
 ## Writing a component test
 
 Test the contract, not the markup. `expect(wrapper.element.tagName).toBe('BUTTON')` is worth having because it fails if someone "improves" the component into a `div`. Snapshot tests of rendered HTML are not worth having — they fail on every whitespace change and assert nothing about accessibility.
+
