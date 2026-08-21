@@ -1,0 +1,5 @@
+/* The toolkit's tokens are the single source of accessibility-sensitive
+ * values. Tailwind v4 compiles @theme to custom properties, so applying a
+ * profile later means re-declaring variables — no rebuild, no second
+ * stylesheet, no alternate component classes. */
+@import '@accessible-dnd/accessible-ui/theme.css';

@@ -1,0 +1,128 @@
+/*
+ * Accessible UI — design tokens.
+ *
+ * These are the values profiles adapt. Section 9 of the project plan.
+ *
+ * Every accessibility-sensitive value lives here as a CSS custom property so a
+ * profile can change it at runtime by re-declaring the variable on a scope.
+ * Components must reference these tokens rather than hard-coding values.
+ */
+
+@import 'tailwindcss';
+
+/*
+ * `static` is load-bearing, not a style choice.
+ *
+ * A plain `@theme` block only emits the variables Tailwind sees used in
+ * utility classes. It does not scan `var()` calls inside scoped component
+ * styles, so our tokens were being tree-shaken out of the build — including
+ * --a11y-target-size, which meant every control silently lost its minimum
+ * target size while still looking correct in source.
+ *
+ * These tokens are a runtime contract that profiles re-declare, so every one
+ * of them must always ship whether or not anything references it today.
+ * `tests/tokens.test.ts` guards this.
+ */
+@theme static {
+  /* --- Typography --------------------------------------------------- */
+  --a11y-font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --a11y-font-scale: 1;
+  --a11y-line-height: 1.5;
+  --a11y-letter-spacing: 0em;
+  --a11y-font-weight: 400;
+  --a11y-font-weight-emphasis: 600;
+
+  /* --- Spacing ------------------------------------------------------ */
+  --a11y-spacing-scale: 1;
+  --a11y-control-padding-inline: 1rem;
+  --a11y-control-padding-block: 0.625rem;
+  --a11y-section-gap: 1.5rem;
+
+  /* --- Interaction ---------------------------------------------------
+   * WCAG 2.2 SC 2.5.8 sets a floor of 24px. We start well above it: this is
+   * a phone-first application and the plan treats 24px as a legal minimum
+   * rather than a design target. */
+  --a11y-target-size: 44px;
+  --a11y-target-spacing: 0.5rem;
+
+  /* --- Focus -------------------------------------------------------- */
+  --a11y-focus-width: 3px;
+  --a11y-focus-offset: 2px;
+  --a11y-focus-color: #0b5563;
+
+  /* --- Border ------------------------------------------------------- */
+  --a11y-border-width: 1px;
+  --a11y-radius: 6px;
+
+  /* --- Color -------------------------------------------------------
+   * Pairings are validated in tests/contrast.test.ts. Any change here is
+   * checked against every type token and every shipped profile. */
+  --a11y-color-text: #16181f;
+  --a11y-color-text-muted: #4a5160;
+  --a11y-color-surface: #ffffff;
+  --a11y-color-surface-sunken: #f1f3f7;
+  --a11y-color-control-surface: #ffffff;
+  --a11y-color-control-text: #16181f;
+  --a11y-color-border: #6b7385;
+  --a11y-color-primary: #0b5563;
+  --a11y-color-primary-text: #ffffff;
+  --a11y-color-selected: #0b5563;
+  --a11y-color-selected-text: #ffffff;
+  --a11y-color-success: #1d5136;
+  --a11y-color-warning: #6b4106;
+  --a11y-color-error: #97210f;
+
+  /* --- Motion ------------------------------------------------------- */
+  --a11y-transition-duration: 120ms;
+  --a11y-animation-duration: 240ms;
+}
+
+/* Platform preferences seed initial values (plan section 12.1). They sit
+ * above toolkit defaults and below anything the user has chosen. */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --a11y-transition-duration: 0ms;
+    --a11y-animation-duration: 0ms;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --a11y-border-width: 2px;
+    --a11y-color-border: #16181f;
+    --a11y-color-text-muted: #16181f;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --a11y-color-text: CanvasText;
+    --a11y-color-surface: Canvas;
+    --a11y-color-control-surface: ButtonFace;
+    --a11y-color-control-text: ButtonText;
+    --a11y-color-border: CanvasText;
+    --a11y-focus-color: Highlight;
+  }
+}
+
+/* Global reset scoped to what the toolkit needs. */
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--a11y-font-family);
+  font-size: calc(1rem * var(--a11y-font-scale));
+  line-height: var(--a11y-line-height);
+  letter-spacing: var(--a11y-letter-spacing);
+  font-weight: var(--a11y-font-weight);
+  color: var(--a11y-color-text);
+  background: var(--a11y-color-surface);
+  margin: 0;
+}
+
+*:focus-visible {
+  outline: var(--a11y-focus-width) solid var(--a11y-focus-color);
+  outline-offset: var(--a11y-focus-offset);
+}

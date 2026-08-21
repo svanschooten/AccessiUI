@@ -1,0 +1,830 @@
+<title>Plan Review — AccessiUI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+  :root {
+    --ground: #FBFBFD;
+    --surface: #F1F3F7;
+    --surface-2: #E7EAF1;
+    --line: #D5DAE4;
+    --line-strong: #A9B2C2;
+    --ink: #16181F;
+    --ink-soft: #545A69;
+    --accent: #1B5A66;
+    --accent-soft: #E2EFF1;
+    --sev-high: #9C4408;
+    --sev-high-bg: #FBEADC;
+    --sev-med: #24528F;
+    --sev-med-bg: #E4ECF9;
+    --sev-ok: #245A43;
+    --sev-ok-bg: #E0EFE7;
+    --focus: #0F7C8C;
+
+    --f-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0F1218;
+      --surface: #171B23;
+      --surface-2: #1F242F;
+      --line: #2C3340;
+      --line-strong: #4A5567;
+      --ink: #E7E9EF;
+      --ink-soft: #9AA3B4;
+      --accent: #6FC0CD;
+      --accent-soft: #143036;
+      --sev-high: #E7A264;
+      --sev-high-bg: #35220F;
+      --sev-med: #8FB3EC;
+      --sev-med-bg: #16233A;
+      --sev-ok: #79C39C;
+      --sev-ok-bg: #12291F;
+      --focus: #7FD3E2;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0F1218;
+    --surface: #171B23;
+    --surface-2: #1F242F;
+    --line: #2C3340;
+    --line-strong: #4A5567;
+    --ink: #E7E9EF;
+    --ink-soft: #9AA3B4;
+    --accent: #6FC0CD;
+    --accent-soft: #143036;
+    --sev-high: #E7A264;
+    --sev-high-bg: #35220F;
+    --sev-med: #8FB3EC;
+    --sev-med-bg: #16233A;
+    --sev-ok: #79C39C;
+    --sev-ok-bg: #12291F;
+    --focus: #7FD3E2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    margin: 0;
+    padding: 0 1.25rem 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap { max-width: 54rem; margin: 0 auto; }
+
+  a { color: var(--accent); text-underline-offset: 0.15em; }
+  a:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+  code {
+    background: var(--surface-2);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  /* ---- masthead ---- */
+  header.masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 3.5rem 0 2rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(2.1rem, 6vw, 3.4rem);
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 40em;
+  }
+
+  /* ---- tally ---- */
+  .tally {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin: 2.5rem 0 0;
+  }
+  .tally div {
+    background: var(--ground);
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .tally .n {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: 2.1rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .tally .l {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* ---- sections ---- */
+  section { margin-top: 4rem; }
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 3.6vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  h2 + .lede { margin-top: 0; color: var(--ink-soft); max-width: 42em; }
+  h3 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    margin: 0;
+    text-wrap: balance;
+  }
+  p { max-width: 42em; }
+
+  /* ---- finding ---- */
+  .finding {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    margin-top: 2.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .finding-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem 0.85rem;
+  }
+  .fid {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .finding p { margin: 0; }
+
+  .chip {
+    font-family: var(--f-mono);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3em 0.6em;
+    border-radius: 2px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .chip::before { margin-right: 0.45em; font-weight: 400; }
+  .chip.high { color: var(--sev-high); background: var(--sev-high-bg); }
+  .chip.high::before { content: "\25C6"; }
+  .chip.med { color: var(--sev-med); background: var(--sev-med-bg); }
+  .chip.med::before { content: "\25B2"; }
+  .chip.low { color: var(--ink-soft); background: var(--surface-2); }
+  .chip.low::before { content: "\25CF"; }
+  .chip.ok { color: var(--sev-ok); background: var(--sev-ok-bg); }
+  .chip.ok::before { content: "\2713"; }
+  .chip.applied { color: var(--sev-ok); background: var(--sev-ok-bg); }
+  .chip.applied::before { content: "\2713"; }
+
+  .banner {
+    margin-top: 2.5rem;
+    border: 1px solid var(--sev-ok);
+    background: var(--sev-ok-bg);
+    padding: 1.2rem 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .banner h2 { font-size: 1.2rem; margin: 0; }
+  .banner p { margin: 0; font-size: 0.97rem; max-width: 46em; }
+  .banner .stamp {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sev-ok);
+    font-weight: 600;
+  }
+  .refined {
+    border-left: 3px solid var(--sev-ok);
+    padding: 0.1rem 0 0.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .refined .fix-label { color: var(--sev-ok); }
+
+  /* ---- the facing pair: the signature device ---- */
+  .versus {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0 1rem;
+    align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 1.1rem 1.2rem;
+  }
+  .versus > div { display: flex; flex-direction: column; gap: 0.4rem; }
+  .versus .src {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+  .versus q {
+    font-size: 0.97rem;
+    line-height: 1.5;
+    quotes: "\201C" "\201D";
+  }
+  .versus .pivot {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    align-self: center;
+    border-left: 1px solid var(--line-strong);
+    border-right: 1px solid var(--line-strong);
+    padding: 0.4rem 0.75rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  @media (max-width: 40rem) {
+    .versus { grid-template-columns: 1fr; gap: 0.9rem; }
+    .versus .pivot {
+      writing-mode: horizontal-tb;
+      border: 0;
+      border-top: 1px solid var(--line-strong);
+      border-bottom: 1px solid var(--line-strong);
+      padding: 0.3rem 0;
+      text-align: center;
+    }
+  }
+
+  .fix {
+    border-left: 3px solid var(--accent);
+    padding: 0.1rem 0 0.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .fix .fix-label {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  ul, ol { max-width: 42em; padding-left: 1.3rem; }
+  li { margin-bottom: 0.4rem; }
+  li::marker { color: var(--ink-soft); }
+
+  /* ---- verified list ---- */
+  .verified {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .verified li {
+    background: var(--ground);
+    margin: 0;
+    padding: 0.85rem 1.1rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+  .verified .tick {
+    color: var(--sev-ok);
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .verified b { font-weight: 600; }
+  .verified span.body { font-size: 0.97rem; }
+
+  /* ---- sequence ---- */
+  .seq { counter-reset: step; list-style: none; padding: 0; margin: 1.75rem 0 0; }
+  .seq li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    padding-bottom: 1.4rem;
+    margin: 0;
+  }
+  .seq li::before {
+    content: counter(step);
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    width: 2rem; height: 2rem;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    font-variant-numeric: tabular-nums;
+  }
+  .seq h3 { margin-bottom: 0.25rem; }
+  .seq p { margin: 0; font-size: 0.97rem; }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 0.9rem 1.1rem;
+    overflow-x: auto;
+    font-family: var(--f-mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  pre b { color: var(--accent); font-weight: 600; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 32rem; }
+  th, td { text-align: left; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    background: var(--surface);
+  }
+  tr:last-child td { border-bottom: 0; }
+
+  footer {
+    margin-top: 4.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--ink);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  footer ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+  footer li { margin: 0; }
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <span class="eyebrow">Technical review &middot; accessible-ui-project-plan.md &middot; 2174 lines</span>
+  <h1>The plan already knows what&rsquo;s wrong with it</h1>
+  <p class="standfirst">The standards research checks out. The vision is sound, and two of its ideas are better than common practice. Almost every real defect is the same defect: a concrete choice in one section that a principle in another section forbids.</p>
+</header>
+
+<div class="tally">
+  <div><span class="n">5</span><span class="l">Claims verified<br>against source</span></div>
+  <div><span class="n">7</span><span class="l">Internal<br>contradictions</span></div>
+  <div><span class="n">4</span><span class="l">Genuine<br>omissions</span></div>
+  <div><span class="n">4</span><span class="l">Housekeeping<br>fixes</span></div>
+</div>
+
+<div class="banner">
+  <span class="stamp">Resolved &middot; 21 August 2026</span>
+  <h2>All eleven findings accepted and applied to the plan</h2>
+  <p>The plan document has been revised. Citations stripped, precedence chain inverted with protected preferences carved out, merge semantics scoped to within-layer, <code>type="number"</code> replaced, settings split into simple and detailed modes, roadmap resequenced around a vertical slice, and Tailwind retargeted to v4. Five findings were refined during review &mdash; those are marked below.</p>
+</div>
+
+<section>
+  <h2>What holds up</h2>
+  <p class="lede">I checked every external claim the document makes. All of them are accurate, which is not typical for a plan of this length.</p>
+
+  <ul class="verified">
+    <li><span class="tick">OK</span><span class="body"><b>WCAG 2.2 SC 2.5.8 &mdash; 24&times;24 CSS px, &ldquo;subject to exceptions.&rdquo;</b> Correct, and the plan is right that there are exceptions (spacing, equivalent control, inline, user-agent, essential). It is also right to treat 24px as a legal floor and design well above it.</span></li>
+    <li><span class="tick">OK</span><span class="body"><b>SRD 5.2.1 under CC-BY-4.0.</b> Correct. One gap: the license mandates a <em>verbatim</em> attribution string and explicitly forbids adding any other attribution to Wizards. The plan says &ldquo;include the required attribution&rdquo; without recording what it is. Put the exact sentence in the repo now, before content lands.</span></li>
+    <li><span class="tick">OK</span><span class="body"><b>APG&rsquo;s slider warning about touch AT.</b> Near-verbatim and correctly characterised: touch assistive tech must synthesise key events to move a slider, and that convention &ldquo;may not be fully implemented.&rdquo; This matters more than the plan realises &mdash; see D4.</span></li>
+    <li><span class="tick">OK</span><span class="body"><b>The four preference media features</b> and the caveat that support varies. Accurate. Three more are worth adding: <code>prefers-reduced-transparency</code>, <code>inverted-colors</code>, and <code>scripting</code>.</span></li>
+    <li><span class="tick">OK</span><span class="body"><b>&ldquo;A custom ARIA role is a behavioral promise.&rdquo;</b> An accurate reading of the first rule of ARIA, and the correct organising principle for a component library.</span></li>
+  </ul>
+
+  <p style="margin-top:1.75rem">Two ideas here are genuinely better than standard practice and should survive any revision. <b>Profiles are UI preferences, not diagnoses</b> (&sect;10.1, &sect;23.11) &mdash; most &ldquo;accessibility mode&rdquo; products get this wrong. And <b>calibration asks about outcomes, not conditions</b> (&sect;13.1): &ldquo;which text size is easiest to read&rdquo; instead of &ldquo;do you have low vision.&rdquo; Keeping the character profile separate from the accessibility profile (&sect;18) is a real privacy insight, because accessibility settings are health-adjacent data.</p>
+</section>
+
+<section>
+  <h2>Seven places the plan argues against itself</h2>
+  <p class="lede">These are not disagreements with the vision. In each case the document states a principle and then, somewhere else, specifies something the principle rules out. The fix is to apply its own rule.</p>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D1</span>
+      <h3>The precedence chain can override a harm-avoidance setting</h3>
+      <span class="chip high">Fix before coding</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;5.4 &mdash; Guiding principle</span>
+        <q>The project should not fight accessibility features the platform already provides.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;12 &mdash; Precedence order</span>
+        <q>browser / OS preference &rarr; built-in toolkit defaults &rarr; selected profile(s) &rarr; user customizations</q>
+      </div>
+    </div>
+    <p>Read as a cascade &mdash; later wins &mdash; this puts OS preferences at the <em>bottom</em> of the stack. Toolkit defaults would override the operating system, which is certainly not intended, and a saved profile could quietly re-enable animation for someone whose OS says <code>prefers-reduced-motion: reduce</code>. For a vestibular disorder that is not a preference violation, it is nausea or a migraine.</p>
+    <p>&sect;12&rsquo;s merge table patches the single case (<code>reduced motion &rarr; OR</code>), but the two mechanisms contradict each other and the document never says which one is authoritative. That ambiguity is the bug &mdash; the plan itself demands the result be &ldquo;deterministic and explainable.&rdquo;</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Invert the first two layers and split the safety-relevant preferences out:</p>
+      <pre>toolkit defaults          <b>base layer</b>
+  &darr;
+browser / OS preference   <b>seeds initial values</b>
+  &darr;
+selected profile(s)
+  &darr;
+user customization
+  &darr;
+per-component override
+
+<b>except:</b> reduced-motion, forced-colors and reduced-transparency
+may only be relaxed by an explicit, deliberate user action &mdash;
+never as a side effect of loading a profile.</pre>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D2</span>
+      <h3>&ldquo;Max wins&rdquo; merging makes adaptations irreversible</h3>
+      <span class="chip med">Fix in the doc</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;5.7 &mdash; Guiding principle</span>
+        <q>Accessibility settings should be easy to change and easy to reset. Users should never have to &ldquo;commit&rdquo; to a particular profile permanently.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;12 &mdash; Merge semantics</span>
+        <q>font scale &rarr; max &nbsp;/&nbsp; spacing scale &rarr; max &nbsp;/&nbsp; minimum target &rarr; max</q>
+      </div>
+    </div>
+    <p>A user loads &ldquo;Large Text&rdquo; at 1.5&times;, finds it slightly too big, and asks for 1.25&times;. Under max-merge they cannot have it. The safest-value rule is right for combining two <em>profiles</em>, but wrong when applied to the user&rsquo;s own explicit adjustment &mdash; it turns a starting point into a floor.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Scope max-merge to <em>within</em> a layer: when two profiles are active, take the max. The user-customization layer above it sets absolute values that replace, not raise. That preserves both the safety intent and reversibility.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D3</span>
+      <h3><code>&lt;input type="number"&gt;</code> is the wrong default for this app</h3>
+      <span class="chip high">Fix before coding</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;5.1 &mdash; Native first</span>
+        <q><code>&lt;input type="number"&gt;</code> where appropriate</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;24.6 &mdash; UX pitfall to avoid</span>
+        <q>Tiny +/- controls. Number adjustments are particularly common in a D&amp;D sheet and should have comfortable interaction targets.</q>
+      </div>
+    </div>
+    <p>The native number input <em>is</em> the tiny +/&minus; control &mdash; its spinner arrows are roughly 10&times;10px and not author-resizable. The GOV.UK Design System dropped <code>type="number"</code> after user testing: scroll-wheel and trackpad gestures silently change the value while a user is scrolling past, and there are zoom and autofill problems on top. Every one of those failure modes is aimed squarely at this project&rsquo;s users, and this is the single most-used control in the app &mdash; HP, six ability scores, every modifier.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Use <code>&lt;input type="text" inputmode="numeric"&gt;</code> (<code>inputmode="decimal"</code> where fractions are possible), which still summons the numeric keypad on phones. Pair it with the large explicit stepper buttons the plan already designs in &sect;26.4. Native-first is still the right principle &mdash; <code>type="number"</code> is just the one native control that fails it.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D4</span>
+      <h3>The settings screen is built from the one control the plan warns about</h3>
+      <span class="chip high">Fix before coding</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;24.7 &mdash; UX pitfall to avoid</span>
+        <q>A slider may be useful, but every critical setting should have a precise non-drag interaction if practical.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;16 &mdash; Settings UI mockup</span>
+        <q>Text size [slider] &middot; Spacing [slider] &middot; Control size [slider] &middot; Focus visibility [slider]</q>
+      </div>
+    </div>
+    <p>Four of the seven settings are sliders, and they are the four that matter most. Two compounding problems: the APG warning you already cite means touch AT may not be able to move them at all, and there is a bootstrapping trap the plan doesn&rsquo;t name &mdash; <b>the accessibility settings UI must be operable at the user&rsquo;s current, worst configuration.</b> Someone who cannot see or hit things accurately is exactly the person who needs to reach these controls, and a drag target is the hardest thing to offer them.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Make the primary control a set of named discrete steps &mdash; a radio group or large stepper reading <span class="mono">Small &middot; Medium &middot; Large &middot; Larger &middot; Largest</span> &mdash; with the slider available as an optional secondary refinement. Discrete steps also make the calibration wizard&rsquo;s output reproducible and easier to describe in an exported profile. Add a rule to &sect;16: the settings panel must remain operable at every setting it can produce, including the extremes.</p>
+    </div>
+    <div class="refined">
+      <span class="fix-label">Refined &mdash; as built</span>
+      <p>Discrete steps trade precision for operability, and for some users that trade is wrong. The plan now ships <b>two modes</b>: simple mode with named steps as the default, and an opt-in <b>detailed mode</b> exposing sliders and numeric inputs over the full range. Every slider in detailed mode carries an adjacent numeric field, so drag is never the only route to a value, and custom values survive a return to simple mode. Best-effort accessibility by default, full control one action away &mdash; &sect;24.9 progressive disclosure applied to the settings panel itself.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D5</span>
+      <h3>The roadmap builds the framework first &mdash; which &sect;43 forbids</h3>
+      <span class="chip high">Fix before coding</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;43 &mdash; Final project philosophy</span>
+        <q>Do not turn it into a giant framework before there is a real application proving the need for the abstractions.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;36 &mdash; Proposed roadmap</span>
+        <q>Phase 1 primitives &rarr; Phase 2 tokens and profiles &rarr; Phase 3 calibration &rarr; <b>Phase 4 D&amp;D character sheet</b></q>
+      </div>
+    </div>
+    <p>Eleven components, a token system, six profiles and a seven-step calibration wizard all get designed and frozen before a single person sits at a table with the thing. Every abstraction in Phases 1&ndash;3 is built without the feedback that would tell you whether it is the right abstraction &mdash; precisely the failure &sect;43 names. The friend this project exists for waits three phases to get anything.</p>
+    <p>It is also a volunteer-retention problem. &ldquo;Help me build a component library&rdquo; recruits differently from &ldquo;help me get my friend playing D&amp;D again,&rdquo; and the second is the one that&rsquo;s true.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution &mdash; a vertical slice first</span>
+      <p>Reorder so a usable sheet exists in weeks, then generalise from what it taught you. See the sequence at the end of this review.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D6</span>
+      <h3>The HP controls invite mistaps and offer no undo</h3>
+      <span class="chip med">Fix in the doc</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;8.3 &mdash; Component contract</span>
+        <q>[Every interactive target should] tolerate accidental taps where practical.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;26.4 &mdash; Resource editing</span>
+        <q>[ -10 ] [ -5 ] [ -1 ] &nbsp;/&nbsp; [ +1 ] [ +5 ] [ +10 ]</q>
+      </div>
+    </div>
+    <p>Six adjacent buttons, deliberately large, operated one-handed under time pressure by users with motor impairments &mdash; mistaps are not an edge case, they are the expected case. Nothing in the plan provides undo for anything, and the &ldquo;tolerate accidental taps&rdquo; requirement is never cashed out into a mechanism.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Add a persistent last-change line directly under the HP value: <span class="mono">&ldquo;&minus;5 &rarr; 29 HP &nbsp;[Undo]&rdquo;</span>. This does three jobs at once &mdash; it satisfies &sect;8.3, it gives the change a text representation for screen readers, and it puts the feedback adjacent to the control that caused it, which is what D8 needs.</p>
+    </div>
+    <div class="refined">
+      <span class="fix-label">Refined &mdash; as built</span>
+      <p>Generalised rather than special-cased. The plan now defines an <b>updatable element</b> in a new &sect;8.7 of the component contract: any component that mutates a value the user cares about must be capable of rendering its change as text adjacent to the control, with that display profile-configurable, and must offer a route back. This covers spell slots, proficiency toggles, ability scores and conditions, not just hit points.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D7</span>
+      <h3><code>Menu</code> is listed as a v1 primitive</h3>
+      <span class="chip low">Cheap</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <div class="versus">
+      <div>
+        <span class="src">&sect;23.6 &mdash; Known difficult problem</span>
+        <q>Custom sliders, comboboxes, draggable elements, and interactive grids carry a significant accessibility burden.</q>
+      </div>
+      <span class="pivot">but</span>
+      <div>
+        <span class="src">&sect;7.1 &mdash; Initial primitives</span>
+        <q>Dialog &middot; Disclosure &middot; Popover &middot; <b>Menu</b></q>
+      </div>
+    </div>
+    <p>The APG menu pattern models desktop application menus and needs roving tabindex, type-ahead and full arrow-key semantics. It belongs on &sect;23.6&rsquo;s list, and it is one of the most frequently mis-implemented patterns on the web &mdash; applied to ordinary navigation it makes screen-reader output worse than a plain list of links would have been. It is already absent from the &sect;42 milestone; &sect;7.1 just hasn&rsquo;t been trimmed to match.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Drop <code>Menu</code> from v1 and build <code>Popover</code> on the native <code>popover</code> attribute rather than from scratch. Nothing in the character sheet or the settings panel needs a true menu widget.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Four things that aren&rsquo;t in the plan at all</h2>
+  <p class="lede">Unlike the contradictions above, these are absences. The first is the most consequential, and it is directly relevant to the friend this project is for.</p>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D8</span>
+      <h3>Screen magnification is never mentioned</h3>
+      <span class="chip high">Fix before coding</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <p>The plan covers browser zoom and text scaling thoroughly &mdash; 200%, 400%, reflow, &sect;23.7&rsquo;s list of layout traps. But magnifier software (ZoomText, macOS Zoom, Android magnification, commonly 2&times;&ndash;16&times;) is a <em>different mechanism</em>: the layout doesn&rsquo;t reflow at all. The user pans a small window over an unchanged page and may see a fifth of the screen at a time. Every reflow fix in &sect;23.7 does nothing for them.</p>
+    <p>Three things in the current design break under it, and all three are load-bearing:</p>
+    <ul>
+      <li>A dice result announced in a live region placed away from the button that triggered it lands <b>outside the magnified viewport</b>. The user taps Roll and sees nothing happen.</li>
+      <li>&sect;16&rsquo;s <span class="mono">[ Preview ]</span> sits below the whole settings stack &mdash; the user cannot see the control and its effect simultaneously, which defeats the point of a preview.</li>
+      <li>Any toast or banner in a page corner is simply invisible.</li>
+    </ul>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Adopt a stated design rule: <b>feedback appears adjacent to the control that caused it.</b> Roll results render next to the roll button, not only in a status bar. The settings preview updates a sample control sitting inline beside each setting. Then add magnifier passes to &sect;21.2 and a &ldquo;visible within a 1/5-viewport window&rdquo; check to &sect;37. This is cheap if decided now and expensive to retrofit, because it constrains layout.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D9</span>
+      <h3>Local-only storage puts calibration one cache-clear from gone</h3>
+      <span class="chip med">Fix in the doc</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <p>&sect;17&rsquo;s local-first stance is right, and &sect;18&rsquo;s privacy reasoning is genuinely good. But a calibrated profile is the output of a seven-step wizard, and <code>localStorage</code> is evictable: Safari caps script-written storage for non-installed sites, private browsing discards it, &ldquo;clear site data&rdquo; takes it, and IndexedDB can be evicted under storage pressure. The failure mode is nasty and specific &mdash; the user loses the settings that made the app legible, so they must now redo calibration <em>in an app they can no longer read comfortably</em>.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Three additions, none of which need a server or compromise &sect;18: call <code>navigator.storage.persist()</code> once calibration completes; make export a prompted final step of the wizard rather than a button in a panel; and consider encoding the profile in a URL fragment or QR code so it can move to a new device without an account. Add a durability line to &sect;37&rsquo;s profile checklist.</p>
+    </div>
+    <div class="refined">
+      <span class="fix-label">Refined &mdash; as built</span>
+      <p>Marked <b>deferred</b>, but the abstraction is reserved now so the decision stays open. Persistence is specified as an interface with interchangeable backends &mdash; <code>localStorage</code>, <code>sessionStorage</code>, cookie, IndexedDB, and explicit JSON download/upload &mdash; rather than direct calls to any one of them. QR encoding is recorded as a research-backlog item, since it needs tooling that does not exist yet.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D10</span>
+      <h3>&sect;41 asks how to test palettes scientifically; nothing answers it</h3>
+      <span class="chip med">Fix in the doc</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <p>&sect;24.2 correctly says high contrast is not black-and-white, and &sect;41 asks the right open question &mdash; &ldquo;How do we test color palettes scientifically rather than by visual intuition?&rdquo; &mdash; but no section supplies a method. The gap has a structural cause worth naming: contrast is a function of colour <em>and</em> size <em>and</em> weight, while &sect;9 puts colour, typography and size in three separate token groups that are never evaluated together.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Treat a contrast token as a triple of (foreground, background, minimum size/weight) rather than a colour pair, and add a CI check that walks the full matrix of colour tokens &times; type tokens &times; every shipped profile. That matrix is also the honest answer to whether a profile combination is safe &mdash; it is a computation, not a judgement call. WCAG 2.x ratios are the practical baseline; treat APCA as a research-backlog item in &sect;39, not a v1 commitment, since WCAG 3 is nowhere near stable.</p>
+    </div>
+    <div class="refined">
+      <span class="fix-label">Refined &mdash; as built</span>
+      <p>The computed matrix is written into the plan as a <b>floor, not the setting</b>. Automated validation establishes that a palette is not broken; it does not establish that a palette is comfortable, and those are different questions. Explicit user configuration of contrast stays a first-class feature precisely so the project can calibrate against real preferences with people who have relevant lived experience, rather than shipping whatever a ratio calculation permits.</p>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="fid">D11</span>
+      <h3>The &sect;22 test matrix is more than a volunteer project can maintain</h3>
+      <span class="chip low">Cheap</span>
+      <span class="chip applied">Applied</span>
+    </div>
+    <p>Twelve conditions applied to roughly twenty-five components is around 300 visual-regression baselines, every one of which needs re-approving whenever a token changes. On a volunteer project that will be abandoned within two months, and a half-maintained snapshot suite is worse than none because it trains people to click through failures.</p>
+    <div class="fix">
+      <span class="fix-label">Suggested resolution</span>
+      <p>Split the matrix by cost. Run the cheap assertions &mdash; computed target size, contrast, accessible name, no horizontal scroll at 320px &mdash; programmatically across the full matrix, since those are numbers and not screenshots. Reserve visual snapshots for a named handful of high-risk pairs (Dialog &times; 400% zoom, the HP control &times; large-targets, the settings panel &times; forced-colors). Also add SC 1.4.12 text-spacing and SC 1.4.10 320px reflow to &sect;37 as explicit checkboxes &mdash; &sect;8.5 implies both but the Definition of Done omits them, and only what&rsquo;s on the checklist gets done.</p>
+    </div>
+    <div class="refined">
+      <span class="fix-label">Refined &mdash; as built</span>
+      <p>&sect;22 is now sorted into three cost tiers: computed assertions run exhaustively on every commit, visual snapshots restricted to five named high-risk pairs each carrying a written justification, and manual/AT testing per release. A new &sect;22.4 states plainly that tier 3 exceeds volunteer capacity at the full scope described, and names the two honest responses &mdash; reduce scope, or secure dedicated resourcing. Until one is settled, accessibility claims stay scoped to what has actually been tested.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Housekeeping</h2>
+  <p class="lede">Small, and all of it should happen before the document goes to volunteers.</p>
+
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Item</th><th>What&rsquo;s there</th><th>Do this</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>21 broken citations</b></td>
+        <td>Every <q>citation</q> in the document is an artifact of an AI research tool &mdash; literal <code>cite&hellip;turn&hellip;search</code> strings wrapped in private-use characters (U+E200&ndash;E202). They resolve to nothing and render as garbage in most editors.</td>
+        <td>Strip them and link inline claims to the real URLs, which &sect;44 already lists correctly.</td>
+      </tr>
+      <tr>
+        <td><b>Tailwind version</b></td>
+        <td>&sect;19 shows <code>tailwind.config.ts</code>, which is the v3 model. v4 is CSS-first: tokens are declared in an <code>@theme</code> block, the JS config is opt-in and on the way out.</td>
+        <td>Target v4 &mdash; and note this is an opportunity, not a chore. v4 compiles the theme to CSS custom properties, which is exactly &sect;9&rsquo;s token mechanism, so profile switching becomes re-declaring variables at runtime. The plan gets its adaptation engine close to free.</td>
+      </tr>
+      <tr>
+        <td><b>Repo layout</b></td>
+        <td>&sect;19 puts <code>vite.config.ts</code> and <code>tailwind.config.ts</code> at the root alongside <code>apps/</code> and <code>packages/</code>.</td>
+        <td>In a workspace each app and package carries its own build config; only <code>package.json</code> and <code>tsconfig</code> base belong at the root.</td>
+      </tr>
+      <tr>
+        <td><b>Stray file</b></td>
+        <td><code>accessible-ui-project-plan.md:Zone.Identifier</code> is a Windows mark-of-the-web artifact that came across through WSL, currently untracked.</td>
+        <td>Delete it and add <code>*:Zone.Identifier</code> to <code>.gitignore</code>.</td>
+      </tr>
+      <tr>
+        <td><b>Non-goals</b></td>
+        <td>&sect;4 is a good list but omits three things contributors will otherwise propose.</td>
+        <td>Add: no internationalisation in v1, no third-party theming API, no SSR.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>The one structural change worth making</h2>
+  <p class="lede">If you act on nothing else here, act on D5. This is a concrete replacement for Phases 1&ndash;4 that keeps every deliverable in the plan and only changes what order they arrive in. The steps are numbered because the order is the point.</p>
+
+  <ol class="seq">
+    <li>
+      <div>
+        <h3>One screen, on a real phone, with your friend</h3>
+        <p>HP with steppers and undo, and one skill row that rolls. Three components, hard-coded values, no profiles, no tokens, no build system decisions you can&rsquo;t reverse. The goal is a session at an actual table &mdash; and the questions it answers (how big is big enough, does the roll result get noticed, what did they reach for that wasn&rsquo;t there) are the ones every later abstraction depends on.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Extract tokens from what that screen needed</h3>
+        <p>You now know which values actually varied for a real person, which is a much better basis for &sect;9&rsquo;s token list than enumerating categories up front. Everything that didn&rsquo;t vary stays hard-coded until something makes it vary.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Fill out the sheet with the components it demands</h3>
+        <p>Ability scores, saves, skills, combat stats. Build a primitive when the sheet needs one, not because &sect;7.1 lists it. Components that never get demanded were never needed &mdash; that is the &sect;43 test working as designed.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Generalise the settings into the profile system</h3>
+        <p>Now do &sect;12 properly, with the corrected precedence from D1 &mdash; and with real profiles to test the merge rules against rather than hypothetical ones.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Calibration last</h3>
+        <p>The wizard produces a profile, so it cannot be designed before the profile format has been proven. Building it earlier means building it twice.</p>
+      </div>
+    </li>
+  </ol>
+
+  <p style="margin-top:1.5rem">This reaches the same place as the existing Phases 0&ndash;6 and delivers something usable at step 1 instead of step 4. It also changes the pitch to volunteers from &ldquo;help build a component library&rdquo; to &ldquo;help get people playing,&rdquo; which is both more accurate and easier to say yes to.</p>
+</section>
+
+<footer>
+  <p><b>Sources consulted for this review</b></p>
+  <ul>
+    <li><a href="https://wcag22aa.org/new-criteria/target-size/">WCAG 2.2 SC 2.5.8 Target Size (Minimum)</a> &mdash; the 24&times;24 requirement and its five exceptions</li>
+    <li><a href="https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf">System Reference Document 5.2.1 (PDF)</a> and <a href="https://www.dndbeyond.com/srd">D&amp;D Beyond SRD</a> &mdash; CC-BY-4.0 terms and the mandated attribution string</li>
+    <li><a href="https://www.w3.org/WAI/ARIA/apg/patterns/slider/">WAI-ARIA APG &mdash; Slider Pattern</a> &mdash; the touch assistive-technology warning</li>
+    <li><a href="https://technology.blog.gov.uk/2020/02/24/why-the-gov-uk-design-system-team-changed-the-input-type-for-numbers/">GOV.UK &mdash; Why we changed the input type for numbers</a> &mdash; the evidence behind D3</li>
+    <li><a href="https://tailwindcss.com/blog/tailwindcss-v4">Tailwind CSS v4</a> &mdash; CSS-first configuration and the <code>@theme</code> directive</li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency">MDN &mdash; <code>prefers-reduced-transparency</code></a> &mdash; one of the media features worth adding</li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7871698/">Towards Making Videos Accessible for Low Vision Screen Magnifier Users</a> &mdash; on panning a magnified viewport over changing content</li>
+  </ul>
+</footer>
+
+</div>
