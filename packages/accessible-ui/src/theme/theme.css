@@ -120,6 +120,14 @@ body {
   color: var(--a11y-color-text);
   background: var(--a11y-color-surface);
   margin: 0;
+
+  /*
+   * Long words must break rather than push the page wide. At high text scale a
+   * single word can exceed the content box — a character named "Thundershield"
+   * at 200% breaks reflow for exactly the users who need 200%. Inherited, so
+   * this covers every descendant. (SC 1.4.10, plan section 23.7.)
+   */
+  overflow-wrap: break-word;
 }
 
 *:focus-visible {
